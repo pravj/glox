@@ -4,12 +4,6 @@ import (
   "fmt"
 )
 
-func CheckError(e error) {
-    if e != nil {
-        panic(e)
-    }
-}
-
 func ReportError(line int, where string, message string) {
   fmt.Printf("Error: %v\n", message)
   fmt.Printf("  %v | %v\n", line, where)

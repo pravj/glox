@@ -4,11 +4,14 @@ import "github.com/pravj/glox/scanner/token"
 import "github.com/pravj/glox/errors"
 import "fmt"
 import "strings"
+import "github.com/pravj/glox/utils"
 
 type Scanner struct {
 	source string
 	lines  []string
 	tokens []token.Token
+
+  keywords map[string]token.TokenType
 
 	start   int
 	current int
@@ -16,7 +19,12 @@ type Scanner struct {
 }
 
 func New(source string) *Scanner {
-	return &Scanner{source: source, lines: strings.Split(source, "\n"), tokens: make([]token.Token, 0), line: 1}
+	return &Scanner{
+    source: source,
+    lines: strings.Split(source, "\n"),
+    tokens: make([]token.Token, 0),
+    keywords: utils.KeywordMap(),
+    line: 1}
 }
 
 func (s *Scanner) ScanTokens() []token.Token {
@@ -32,6 +40,7 @@ func (s *Scanner) ScanTokens() []token.Token {
 
 func (s *Scanner) scanToken() {
 	nextChar := s.nextCharacter()
+
 	switch nextChar {
 	case "(":
 		s.addToken(token.LEFT_PAREN)
@@ -86,7 +95,7 @@ func (s *Scanner) scanToken() {
     break
   case "/":
     if s.matchCharacter("/") {
-      for (s.lookahead() != "\n" && !s.scanComplete()) {
+      for (s.lookahead(0) != "\n" && !s.scanComplete()) {
         s.nextCharacter()
       }
     } else {
@@ -97,13 +106,32 @@ func (s *Scanner) scanToken() {
     s.scanStringLiteral()
     break
 	default:
-		errors.ReportError(s.line, s.lines[s.line-1], fmt.Sprintf("Unexpected token %v", nextChar))
+    if utils.IsDigit(nextChar) {
+      s.scanNumberLiteral()
+    } else if utils.IsAlpha(nextChar) {
+      s.scanIdentifier()
+    } else {
+      errors.ReportError(s.line, s.lines[s.line-1], fmt.Sprintf("Unexpected token %v", nextChar))
+    }
 	}
 }
 
+func (s *Scanner) scanIdentifier() {
+  for utils.IsAlphaNumeric(s.lookahead(0)) {
+    s.nextCharacter()
+  }
+
+  text := string(s.source[s.start:s.current])
+  if _, present := s.keywords[text]; present {
+    s.addToken(s.keywords[text])
+  } else {
+    s.addToken(token.IDENTIFIER)
+  }
+}
+
 func (s *Scanner) scanStringLiteral() {
-  for (s.lookahead() != "\"" && !s.scanComplete()) {
-    if s.lookahead() == "\n" { s.line++ }
+  for (s.lookahead(0) != "\"" && !s.scanComplete()) {
+    if s.lookahead(0) == "\n" { s.line++ }
 
     s.nextCharacter()
   }
@@ -120,6 +148,22 @@ func (s *Scanner) scanStringLiteral() {
   // TODO: deal with the literal value for a token (use interface)
   // fmt.Println(string(s.source[s.start+1:s.current-1]))
   s.addToken(token.STRING)
+}
+
+func (s *Scanner) scanNumberLiteral() {
+  for utils.IsDigit(s.lookahead(0)) {
+    s.nextCharacter()
+  }
+
+  if (s.lookahead(0) == "." && utils.IsDigit(s.lookahead(1))) {
+    s.nextCharacter()
+
+    for utils.IsDigit(s.lookahead(0)) {
+      s.nextCharacter()
+    }
+  }
+
+  s.addToken(token.NUMBER)
 }
 
 func (s *Scanner) addToken(tokenType token.TokenType) {
@@ -153,12 +197,12 @@ func (s *Scanner) matchCharacter(expectedChar string) bool {
   return true
 }
 
-func (s *Scanner) lookahead() string {
-  if s.current >= len(s.source) {
+func (s *Scanner) lookahead(length int) string {
+  if s.current + length >= len(s.source) {
     return "\000"
   }
 
-  return string(s.source[s.current])
+  return string(s.source[s.current + length])
 }
 
 func (s *Scanner) scanComplete() bool {

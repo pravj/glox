@@ -8,7 +8,7 @@ import (
 
 	"github.com/pravj/glox/cmd"
 	"github.com/pravj/glox/scanner"
-	"github.com/pravj/glox/errors"
+	"github.com/pravj/glox/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -57,7 +57,7 @@ func RunRootCmd(cmd *cobra.Command, args []string) {
 	} else if numArgs == 1 {
 		// read the source file
 		content, err := ioutil.ReadFile(args[0])
-		errors.CheckError(err)
+		utils.CheckError(err)
 
 		interpreter.runSource(string(content))
 	} else {
