@@ -8,11 +8,22 @@ import (
 
 	"github.com/pravj/glox/cmd"
 	"github.com/pravj/glox/scanner"
-	"github.com/pravj/glox/utils"
+	"github.com/pravj/glox/errors"
 	"github.com/spf13/cobra"
 )
 
-func runLoop() {
+type glox struct {
+	// contains unexported functions
+
+	// hasError, flag for error handling
+	hasError bool
+}
+
+func createInterpreter() *glox {
+	return &glox{hasError:false}
+}
+
+func (i *glox) runLoop() {
 	promptPrefix := ">>> "
 
 	replScanner := bufio.NewScanner(os.Stdin)
@@ -30,22 +41,25 @@ func runLoop() {
 	}
 }
 
-func runSource(source string) {
+func (i *glox) runSource(source string) {
 	scanner := scanner.New(source)
-	fmt.Println(scanner)
+	scanner.ScanTokens()
+	// nonzero exit code in case of error in scanning
 }
 
 func RunRootCmd(cmd *cobra.Command, args []string) {
+	interpreter := createInterpreter()
+
 	numArgs := len(args)
 	if numArgs == 0 {
 		// Read-Eval-Print-Loop
-		runLoop()
+		interpreter.runLoop()
 	} else if numArgs == 1 {
 		// read the source file
 		content, err := ioutil.ReadFile(args[0])
-		utils.CheckError(err)
+		errors.CheckError(err)
 
-		runSource(string(content))
+		interpreter.runSource(string(content))
 	} else {
 		fmt.Println("Usage: glox [script]")
 	}
