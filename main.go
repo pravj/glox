@@ -1,3 +1,4 @@
+// Package main implements the public facing interface to the glox interpreter.
 package main
 
 import (
@@ -12,17 +13,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// glox represents the interpreter.
 type glox struct {
-	// contains unexported functions
-
-	// hasError, flag for error handling
+	// hasError, flag for error handling.
 	hasError bool
 }
 
+// createInterpreter returns a new glox instance.
 func createInterpreter() *glox {
-	return &glox{hasError:false}
+	return &glox{hasError: false}
 }
 
+// runLoop implements the REPL interface for glox.
 func (i *glox) runLoop() {
 	promptPrefix := ">>> "
 
@@ -41,12 +43,14 @@ func (i *glox) runLoop() {
 	}
 }
 
+// runSource starts scanning of the source code.
 func (i *glox) runSource(source string) {
 	scanner := scanner.New(source)
 	scanner.ScanTokens()
-	// nonzero exit code in case of error in scanning
+	// TODO: nonzero exit code in case of error in scanning
 }
 
+// RunRootCmd is the function to be executed as the base command.
 func RunRootCmd(cmd *cobra.Command, args []string) {
 	interpreter := createInterpreter()
 

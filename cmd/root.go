@@ -1,3 +1,4 @@
+// Package cmd implements the interface to handle command-line arguments.
 package cmd
 
 import (
@@ -7,14 +8,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// RootCmd represents the base command when called without any subcommands
+// RootCmd represents the base command when called without any subcommands.
 var RootCmd = &cobra.Command{
 	Use:   "glox",
 	Short: "Interpreter for the Lox language in Go",
-	Long: `Interpreter for the Lox language in Go`,
+	Long:  `Interpreter for the Lox language in Go`,
 }
 
-// Execute adds all child commands to the root command sets flags appropriately.
+// Execute handles the execution of the base command.
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
 		fmt.Println(err)

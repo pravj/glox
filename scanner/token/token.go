@@ -1,10 +1,9 @@
-// Package token defines constants (lexems) representing the lexical tokens of Lox
-// programming language.
+// Package token defines (lexems) lexical tokens for the Lox programming language.
 package token
 
 import "fmt"
 
-// TokenType is the set of lexical tokens of the Lox programming language.
+// TokenType represents a set of lexical tokens of the Lox programming language.
 type TokenType int
 
 // TokenType set elements, all the lexems for the language
@@ -60,16 +59,25 @@ const (
 	WHILE
 )
 
+// Token represents metadata about a lexical token
 type Token struct {
-	lexeme    string
-	line      int
+	// type of the lexical token
 	tokenType TokenType
+
+	// string represents of the lexical token
+	lexeme    string
+
+	// line number for the token
+	line      int
 }
 
+
+// New returns a new Token
 func New(tokenType TokenType, lexeme string, line int) Token {
-	return Token{tokenType:tokenType, lexeme:lexeme, line:line}
+	return Token{tokenType: tokenType, lexeme: lexeme, line: line}
 }
 
+// toString returns the string representation of the token
 func (t *Token) toString() string {
 	return fmt.Sprintf("%v %v %v", t.tokenType, t.lexeme, t.line)
 }
