@@ -1,0 +1,47 @@
+// Package ast implements the Abstarct-Syntax-Tree interface of the Lox language.
+package ast
+
+{{/* this generated output is processed through "gofmt" */}}
+
+import (
+  "github.com/pravj/glox/scanner/token"
+)
+
+{{/* name of the visitor interface */}}
+{{$visitorName := "Visitor"}}
+
+{{/* name of the top-level expression structure */}}
+{{$baseClassName := "Expression"}}
+
+// interface to facilitate "visitor pattern"
+type {{$visitorName}} interface {
+  {{- range .TypeAnnotations}}
+    {{$name := . | typeClassName}}
+
+    visit{{$name}}{{$baseClassName}}(expr *{{$name}})
+  {{end -}}
+}
+
+// base struct for expressions
+type {{$baseClassName}} struct {
+}
+
+func (expr *{{$baseClassName}}) accept(v {{$visitorName}}) {
+}
+
+{{- range .TypeAnnotations}}
+  {{$fields := . | typeClassFields}}
+  {{$name := . | typeClassName}}
+
+  type {{$name}} struct {
+    {{- range $fields}}
+      {{. | trimString | capitolCaseString}}
+    {{end}}
+
+    *{{$baseClassName}}
+  }
+
+  func (expr *{{$name}}) accept(v {{$visitorName}}) {
+    v.visit{{$name}}{{$baseClassName}}(expr)
+  }
+{{end -}}

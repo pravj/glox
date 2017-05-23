@@ -39,7 +39,9 @@ func (i *glox) runLoop() {
 		}
 
 		line := replScanner.Text()
-		fmt.Println(line)
+		//fmt.Println(line)
+		scanner := scanner.New(line)
+		scanner.ScanTokens()
 	}
 }
 

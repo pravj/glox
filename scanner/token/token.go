@@ -71,7 +71,6 @@ type Token struct {
 	line      int
 }
 
-
 // New returns a new Token
 func New(tokenType TokenType, lexeme string, line int) Token {
 	return Token{tokenType: tokenType, lexeme: lexeme, line: line}
