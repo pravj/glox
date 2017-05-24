@@ -7,10 +7,10 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/pravj/glox/ast"
+	_ "github.com/pravj/glox/ast"
 	"github.com/pravj/glox/cmd"
 	"github.com/pravj/glox/scanner"
-	"github.com/pravj/glox/scanner/token"
+	_ "github.com/pravj/glox/scanner/token"
 	"github.com/pravj/glox/utils"
 	"github.com/spf13/cobra"
 )
@@ -42,14 +42,14 @@ func (i *glox) runLoop() {
 
 		line := replScanner.Text()
 		//fmt.Println(line)
-		scanner := scanner.New(line)
+		scanner := scanner.NewScanner(line)
 		scanner.ScanTokens()
 	}
 }
 
 // runSource starts scanning of the source code.
 func (i *glox) runSource(source string) {
-	scanner := scanner.New(source)
+	scanner := scanner.NewScanner(source)
 	scanner.ScanTokens()
 	// TODO: nonzero exit code in case of error in scanning
 }

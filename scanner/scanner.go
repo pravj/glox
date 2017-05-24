@@ -39,8 +39,8 @@ type Scanner struct {
 	line int
 }
 
-// New returns a new scanner instance (*Scanner).
-func New(source string) *Scanner {
+// NewScanner returns a new scanner instance (*Scanner).
+func NewScanner(source string) *Scanner {
 	return &Scanner{
 		source:   source,
 		lines:    strings.Split(source, "\n"),
@@ -59,9 +59,9 @@ func (s *Scanner) ScanTokens() []token.Token {
 		s.scanToken()
 	}
 
+	// append the terminal token (End Of File)
 	s.tokens = append(s.tokens, token.New(token.EOF, "", s.line))
-	// TODO: remove this debug helping statement
-	fmt.Println(s.tokens)
+	
 	return s.tokens
 }
 
@@ -134,9 +134,9 @@ func (s *Scanner) scanToken() {
 		s.scanStringLiteral()
 		break
 	default:
-		if utils.IsDigit(nextChar) {
+		if utils.IsDigitCharacter(nextChar) {
 			s.scanNumberLiteral()
-		} else if utils.IsAlpha(nextChar) {
+		} else if utils.IsAlphaCharacter(nextChar) {
 			s.scanIdentifier()
 		} else {
 			errors.ReportError(s.line, s.lines[s.line-1], fmt.Sprintf("Unexpected token %v", nextChar))
@@ -146,7 +146,7 @@ func (s *Scanner) scanToken() {
 
 // scanIdentifier scans the prospective identifier-type token.
 func (s *Scanner) scanIdentifier() {
-	for utils.IsAlphaNumeric(s.lookahead(0)) {
+	for utils.IsAlphaNumericCharacter(s.lookahead(0)) {
 		s.nextCharacter()
 	}
 
@@ -184,14 +184,14 @@ func (s *Scanner) scanStringLiteral() {
 
 // scanNumberLiteral scans the prospective number-type token.
 func (s *Scanner) scanNumberLiteral() {
-	for utils.IsDigit(s.lookahead(0)) {
+	for utils.IsDigitCharacter(s.lookahead(0)) {
 		s.nextCharacter()
 	}
 
-	if s.lookahead(0) == "." && utils.IsDigit(s.lookahead(1)) {
+	if s.lookahead(0) == "." && utils.IsDigitCharacter(s.lookahead(1)) {
 		s.nextCharacter()
 
-		for utils.IsDigit(s.lookahead(0)) {
+		for utils.IsDigitCharacter(s.lookahead(0)) {
 			s.nextCharacter()
 		}
 	}

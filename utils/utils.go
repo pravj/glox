@@ -12,20 +12,20 @@ func CheckError(e error) {
 	}
 }
 
-// IsDigit returns true if the input character represents a digit (0-9).
-func IsDigit(character string) bool {
-	return (character >= "0" && character <= "9")
+// IsDigitCharacter returns true if the input character represents a digit (0-9).
+func IsDigitCharacter(c string) bool {
+	return (len(c) == 1 && (c >= "0" && c <= "9"))
 }
 
-// IsAlpha returns true if the input character represents an alphabet.
+// IsAlphaCharacter returns true if the input character represents an alphabet.
 // The following set of characters are allowed, (a-z, A-Z, _).
-func IsAlpha(c string) bool {
-	return ((c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || (c == "_"))
+func IsAlphaCharacter(c string) bool {
+	return ((len(c) == 1) && ((c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || (c == "_")))
 }
 
-// IsAlphaNumeric returns true if the input character is either digit or alphabet.
-func IsAlphaNumeric(character string) bool {
-	return (IsDigit(character) || IsAlpha(character))
+// IsAlphaNumericCharacter returns true if the input character is either digit or alphabet.
+func IsAlphaNumericCharacter(character string) bool {
+	return (len(character) == 1 && (IsDigitCharacter(character) || IsAlphaCharacter(character)))
 }
 
 // KeywordMap returns a map of all the language keywords (tokens).

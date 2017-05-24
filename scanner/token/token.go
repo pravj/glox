@@ -62,7 +62,7 @@ const (
 // Token represents metadata about a lexical token
 type Token struct {
 	// type of the lexical token
-	tokenType TokenType
+	TypeOfToken TokenType
 
 	// string represents of the lexical token
 	Lexeme string
@@ -72,11 +72,11 @@ type Token struct {
 }
 
 // New returns a new Token
-func New(tokenType TokenType, lexeme string, line int) Token {
-	return Token{tokenType: tokenType, Lexeme: lexeme, line: line}
+func New(typeOfToken TokenType, lexeme string, line int) Token {
+	return Token{TypeOfToken: typeOfToken, Lexeme: lexeme, line: line}
 }
 
 // toString returns the string representation of the token
 func (t *Token) toString() string {
-	return fmt.Sprintf("%v %v %v", t.tokenType, t.Lexeme, t.line)
+	return fmt.Sprintf("%v %v %v", t.TypeOfToken, t.Lexeme, t.line)
 }
