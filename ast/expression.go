@@ -7,66 +7,72 @@ import (
 
 // interface to facilitate "visitor pattern"
 type Visitor interface {
-	visitBinaryExpression(expr *Binary)
+	visitBinaryExpression(expr Binary) interface{}
 
-	visitGroupExpression(expr *Group)
+	visitGroupExpression(expr Group) interface{}
 
-	visitLiteralExpression(expr *Literal)
+	visitLiteralExpression(expr Literal) interface{}
 
-	visitUnaryExpression(expr *Unary)
+	visitUnaryExpression(expr Unary) interface{}
 }
 
-// base struct for expressions
-type Expression struct {
-}
-
-func (expr *Expression) accept(v Visitor) {
+// base interface for expressions
+type Expression interface {
+	Accept(v Visitor) interface{}
 }
 
 type Binary struct {
 	Left Expression
 
-	Operator token.TokenType
+	Operator token.Token
 
 	Right Expression
-
-	*Expression
 }
 
-func (expr *Binary) accept(v Visitor) {
-	v.visitBinaryExpression(expr)
+func NewBinaryExpression(left Expression, operator token.Token, right Expression) *Binary {
+	return &Binary{Left: left, Operator: operator, Right: right}
+}
+
+func (expr *Binary) Accept(v Visitor) interface{} {
+	return v.visitBinaryExpression(*expr)
 }
 
 type Group struct {
 	Expr Expression
-
-	*Expression
 }
 
-func (expr *Group) accept(v Visitor) {
-	v.visitGroupExpression(expr)
+func NewGroupExpression(expr Expression) *Group {
+	return &Group{Expr: expr}
+}
+
+func (expr *Group) Accept(v Visitor) interface{} {
+	return v.visitGroupExpression(*expr)
 }
 
 type Literal struct {
 	Value interface{}
 
 	LiteralType string
-
-	*Expression
 }
 
-func (expr *Literal) accept(v Visitor) {
-	v.visitLiteralExpression(expr)
+func NewLiteralExpression(value interface{}, literalType string) *Literal {
+	return &Literal{Value: value, LiteralType: literalType}
+}
+
+func (expr *Literal) Accept(v Visitor) interface{} {
+	return v.visitLiteralExpression(*expr)
 }
 
 type Unary struct {
-	Operator token.TokenType
+	Operator token.Token
 
 	Right Expression
-
-	*Expression
 }
 
-func (expr *Unary) accept(v Visitor) {
-	v.visitUnaryExpression(expr)
+func NewUnaryExpression(operator token.Token, right Expression) *Unary {
+	return &Unary{Operator: operator, Right: right}
+}
+
+func (expr *Unary) Accept(v Visitor) interface{} {
+	return v.visitUnaryExpression(*expr)
 }

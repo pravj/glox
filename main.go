@@ -7,8 +7,10 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/pravj/glox/ast"
 	"github.com/pravj/glox/cmd"
 	"github.com/pravj/glox/scanner"
+	"github.com/pravj/glox/scanner/token"
 	"github.com/pravj/glox/utils"
 	"github.com/spf13/cobra"
 )

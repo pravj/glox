@@ -6,6 +6,7 @@ Package main implements the toolchain for the Lox language.
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"strings"
@@ -34,18 +35,20 @@ func generateAST() {
 	// strings.ToLower(baseClassName)
 
 	typeAnnotations := []string{
-		"Binary : left Expression, operator token.TokenType, right Expression",
+		"Binary : left Expression, operator token.Token, right Expression",
 		"Group : expr Expression",
 		"Literal : value interface{}, literalType string",
-		"Unary : operator token.TokenType, right Expression",
+		"Unary : operator token.Token, right Expression",
 	}
 
 	funcMap = template.FuncMap{
-		"defineTypeClass": defineTypeClass,
-		"typeClassName":   typeClassName,
-		"typeClassFields": typeClassFields,
-		"trimString":      trimString,
-		"capitolCaseString": capitolCaseString,
+		"defineTypeClass":      defineTypeClass,
+		"typeClassName":        typeClassName,
+		"typeClassFields":      typeClassFields,
+		"typeClassFieldString": typeClassFieldString,
+		"typeClassFieldArgs":   typeClassFieldArgs,
+		"trimString":           trimString,
+		"capitolCaseString":    capitolCaseString,
 	}
 
 	defineAST(baseClassName, typeAnnotations)
@@ -69,8 +72,40 @@ Each element in the slice has the following format
 ["NAME1 TYPE1" "NAME2 TYPE2" "NAME3 TYPE3"...]
 */
 func typeClassFields(annotation string) []string {
+	return strings.Split(typeClassFieldString(annotation), ",")
+}
+
+// typeClassFieldString returns a string representation of arguments
+// NAME1 TYPE1, NAME2 TYPE2, NAME3 TYPE3 ...
+func typeClassFieldString(annotation string) string {
 	fieldString := trimString(strings.Split(annotation, ":")[1])
-	return strings.Split(fieldString, ",")
+	return fieldString
+}
+
+// typeClassFieldArgs returns the struct constructor arguments as a string
+func typeClassFieldArgs(fields []string) string {
+	var argStrBuffer bytes.Buffer
+
+	// {arg1:Arg1, arg2:Arg2 ...}
+	argStrBuffer.WriteString("{")
+
+	for i, field := range fields {
+		arg := strings.Split(trimString(field), " ")[0]
+
+		argStrBuffer.WriteString(strings.Title(arg))
+		argStrBuffer.WriteString(":")
+		argStrBuffer.WriteString(arg)
+
+		// prevent from a trailing comma
+		if i+1 < len(fields) {
+			argStrBuffer.WriteString(", ")
+		}
+	}
+
+	// closing brace
+	argStrBuffer.WriteString("}")
+
+	return argStrBuffer.String()
 }
 
 // trimString trims whitespace from a string using strings.TrimSpace

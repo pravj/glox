@@ -18,18 +18,17 @@ type {{$visitorName}} interface {
   {{- range .TypeAnnotations}}
     {{$name := . | typeClassName}}
 
-    visit{{$name}}{{$baseClassName}}(expr *{{$name}})
+    visit{{$name}}{{$baseClassName}}(expr {{$name}}) interface{}
   {{end -}}
 }
 
-// base struct for expressions
-type {{$baseClassName}} struct {
-}
-
-func (expr *{{$baseClassName}}) accept(v {{$visitorName}}) {
+// base interface for expressions
+type {{$baseClassName}} interface {
+  Accept(v {{$visitorName}}) interface{}
 }
 
 {{- range .TypeAnnotations}}
+  {{$fieldString := . | typeClassFieldString}}
   {{$fields := . | typeClassFields}}
   {{$name := . | typeClassName}}
 
@@ -37,11 +36,14 @@ func (expr *{{$baseClassName}}) accept(v {{$visitorName}}) {
     {{- range $fields}}
       {{. | trimString | capitolCaseString}}
     {{end}}
-
-    *{{$baseClassName}}
   }
 
-  func (expr *{{$name}}) accept(v {{$visitorName}}) {
-    v.visit{{$name}}{{$baseClassName}}(expr)
+  {{$constructor := $fields | typeClassFieldArgs}}
+  func New{{$name}}{{$baseClassName}}({{$fieldString}}) *{{$name}} {
+    return &{{$name}}{{$constructor}}
+  }
+
+  func (expr *{{$name}}) Accept(v {{$visitorName}}) interface{} {
+    return v.visit{{$name}}{{$baseClassName}}(*expr)
   }
 {{end -}}

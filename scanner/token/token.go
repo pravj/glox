@@ -65,18 +65,18 @@ type Token struct {
 	tokenType TokenType
 
 	// string represents of the lexical token
-	lexeme    string
+	Lexeme string
 
 	// line number for the token
-	line      int
+	line int
 }
 
 // New returns a new Token
 func New(tokenType TokenType, lexeme string, line int) Token {
-	return Token{tokenType: tokenType, lexeme: lexeme, line: line}
+	return Token{tokenType: tokenType, Lexeme: lexeme, line: line}
 }
 
 // toString returns the string representation of the token
 func (t *Token) toString() string {
-	return fmt.Sprintf("%v %v %v", t.tokenType, t.lexeme, t.line)
+	return fmt.Sprintf("%v %v %v", t.tokenType, t.Lexeme, t.line)
 }
