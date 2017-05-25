@@ -61,7 +61,7 @@ func (s *Scanner) ScanTokens() []token.Token {
 
 	// append the terminal token (End Of File)
 	s.tokens = append(s.tokens, token.New(token.EOF, "", s.line))
-	
+
 	return s.tokens
 }
 

@@ -6,5 +6,5 @@ Package main implements the toolchain for the Lox language.
 package main
 
 func main() {
-  generateAST()
+	generateAST()
 }
